@@ -2,6 +2,7 @@ const Roles = {
     SUPERADMIN :"superadmin",
     ADMIN: "admin",
     USER: "user",
+    ENSEIGNANT: "Enseignant"
 };
 
 const inRole = 

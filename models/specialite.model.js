@@ -8,8 +8,10 @@ nom:{
     type:String,
     required:false
 },
-
-
+groupeId: [{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'Groupe'
+}],
 
 });
 

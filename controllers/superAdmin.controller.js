@@ -5,6 +5,7 @@ const { helpers } = require("../helpers/helpers");
 
 const createAdmin = async (req, res) => {
     try {
+        console.log(req.body);
         const values = await adminValidation.schemaValidation.validateAsync(
             req.body
             );

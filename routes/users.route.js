@@ -14,7 +14,7 @@ router.get(
 router.get(
   "/users",
   passport.authenticate("jwt", { session: false }),
-  inRole(Roles.ADMIN),
+  inRole(Roles.ADMIN, Roles.SUPERADMIN),
   userController.FindAll
 );
 
@@ -23,7 +23,7 @@ router.post("/users", userController.Register);
 router.delete(
   "/users/:id",
   passport.authenticate("jwt", { session: false }),
-  inRole(Roles.ADMIN),
+  inRole(Roles.ADMIN, Roles.SUPERADMIN),
   userController.Delete
 );
 

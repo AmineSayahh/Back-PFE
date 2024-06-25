@@ -12,7 +12,7 @@ const testSchema = new Schema({
         isCorrect: Boolean
     }],
     specialite: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Specialite'
     },
     score: {

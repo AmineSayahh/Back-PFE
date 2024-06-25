@@ -130,15 +130,13 @@ const addCalendarEntriesForGroup = async (req, res) => {
 
 const getCalendarEventsByUserId = async (req, res) => {
   try {
-    // Extract the user ID from the token
-    const token = req.headers.authorization.split(" ")[1]; // Extract the token from the Bearer header
+    const token = req.headers.authorization.split(" ")[1]; 
     const user = await authController.getUserFromToken(token);
 
     if (!user) {
       return res.status(401).send("Unauthorized: Invalid token");
     }
 
-    // Retrieve all calendar events associated with the user
     const calendarEvents = await calendarModel.find({ userId: user._id });
 
     res.send(calendarEvents);
