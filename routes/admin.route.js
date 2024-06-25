@@ -9,7 +9,7 @@ router.delete("/deleteens", adminController.deleteEnseignant);
 router.get("/FindEns", adminController.FindAllEnseignant);
 
 router.post("/specialites", adminController.createSpecialite);
-router.get("/specialites", adminController.getSpecialites);
+router.get("/specialites/:groupeId", adminController.getSpecialites);
 router.post("/tests", adminController.createTest);
 router.get("/tests", adminController.getTests);
 

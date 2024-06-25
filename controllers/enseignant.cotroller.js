@@ -1,8 +1,11 @@
+const { param } = require("../app");
 const testModel = require("../models/test.model");
+const enseignantModel = require("../models/enseignant.model");
+const groupeModel = require("../models/groupe.model");
 const { authController } = require("./auth.router");
 
 
-const getTests = async (req,res) => {
+const getTests = async (req, res) => {
     try {
         const tests = await testModel.find();
         res.send(tests);
@@ -47,7 +50,7 @@ const getTestById = async (req, res) => {
                     return rest;
                 }
             });
-            
+
             // Create a new object without the isCorrect field in the reponse array
             const modifiedTest = { ...test, reponse: modifiedReponses };
             return modifiedTest;
@@ -108,7 +111,7 @@ const UpdateNote = async (req, res) => {
 
         // Find the record by ID and update the note
         const response = await testModel.findByIdAndUpdate(
-            id, 
+            id,
             { note: note },
             { new: true }  // This option returns the updated document
         );
@@ -125,6 +128,26 @@ const UpdateNote = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
+const findAllGroupe = async (req, res) => {
+    try {
+        console.log(req.params)
+        const { id } = req.params;
+        const ens = await enseignantModel.findById(id).exec();
+        
+        if (!ens) {
+            return res.status(404).send({ message: 'Enseignant not found' });
+        }
+        
+        const groupeIds = ens.GroupeEns; 
+        
+        const groupes = await groupeModel.find({ _id: { $in: groupeIds } }).exec();
+        
+        return res.send(groupes);
+    } catch (error) {
+        console.error('Error fetching groupes:', error);
+        return res.status(500).send({ message: 'Internal Server Error' });
+    }
+};
 
 
 
@@ -132,5 +155,6 @@ module.exports.enseignantController = {
     createTest,
     getTestById,
     getTests,
-    UpdateNote
+    UpdateNote,
+    findAllGroupe
 };

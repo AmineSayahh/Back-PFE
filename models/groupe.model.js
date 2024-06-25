@@ -10,7 +10,6 @@ const groupeSchema = new Schema({
     type: String,
     required: true,
   },
-
   enseignant: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Enseignant",

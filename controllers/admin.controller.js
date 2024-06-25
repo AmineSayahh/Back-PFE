@@ -60,7 +60,6 @@ const deleteEnseignant = async (req, res) => {
 
 const createSpecialite = async (req, res) => {
     try {
-       
         const specialite = await specialiteModel.create(req.body);
         res.send(specialite);
     } catch (error) {
@@ -71,13 +70,17 @@ const createSpecialite = async (req, res) => {
 
 const getSpecialites = async (req, res) => {
     try {
-       
-        const specialites = await specialiteModel.find();
+        const groupeId = req.params.groupeId; 
+
+        const specialites = await specialiteModel.find({ groupeId: groupeId });
+
         res.send(specialites);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 const getTests = async (req,res) => {
     try {

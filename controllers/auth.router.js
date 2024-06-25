@@ -25,14 +25,12 @@ try{
     });
     
 
-    return res.send({token: token, __t :payload.__t });
+    return res.send({token: token, __t :payload.__t, id : payload.id });
     
 } catch (error){
     return helpers.customError(res, error);
 }
 };
-
-
 
 const Logout = async (req, res) => {
     try {
