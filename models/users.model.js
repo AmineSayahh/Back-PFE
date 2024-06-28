@@ -16,7 +16,6 @@ const userSchema = new Schema({
     unique: true,
     validate: {
       validator: function (mail) {
-        // Email validation regex
         const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         return emailRegex.test(mail);
       },

@@ -4,11 +4,17 @@ const users = require('./users.model');
 
 const enseignantSchema = new Schema({
 
-    specialite: {
-        type: String,
-        required: true
-    },
-
+    enseigne: [{
+        specialite: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Specialite'
+        }],
+        GroupeEns: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Groupe'
+        },
+    }
+    ],
     Publication: [{
         DateDeCreation: {
             type: String,
@@ -40,10 +46,6 @@ const enseignantSchema = new Schema({
     //         type:String,
     //         required:false
     //     }],
-    GroupeEns: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Groupe'
-    }],
 
     // GroupeMatiere:[{
     //     idGroupe: {

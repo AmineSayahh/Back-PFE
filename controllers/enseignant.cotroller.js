@@ -3,6 +3,9 @@ const testModel = require("../models/test.model");
 const enseignantModel = require("../models/enseignant.model");
 const groupeModel = require("../models/groupe.model");
 const { authController } = require("./auth.router");
+const specialiteModel = require("../models/specialite.model");
+const postModel = require("../models/post.model");
+const ressourcesModel = require("../models/ressources.model");
 
 
 const getTests = async (req, res) => {
@@ -130,18 +133,15 @@ const UpdateNote = async (req, res) => {
 };
 const findAllGroupe = async (req, res) => {
     try {
-        console.log(req.params)
+        console.log(req.params);
         const { id } = req.params;
-        const ens = await enseignantModel.findById(id).exec();
-        
-        if (!ens) {
+        const enseignant = await enseignantModel.findById(id).exec();
+
+        if (!enseignant) {
             return res.status(404).send({ message: 'Enseignant not found' });
         }
-        
-        const groupeIds = ens.GroupeEns; 
-        
+        const groupeIds = enseignant.enseigne.map(ens => ens.GroupeEns);
         const groupes = await groupeModel.find({ _id: { $in: groupeIds } }).exec();
-        
         return res.send(groupes);
     } catch (error) {
         console.error('Error fetching groupes:', error);
@@ -149,12 +149,80 @@ const findAllGroupe = async (req, res) => {
     }
 };
 
+const getSpecialite = async (req, res) => {
+    try {
+        console.log(req.params);
+        const { id, groupeId } = req.params;
+        const ens = await enseignantModel.findById(id).exec();
+        
+        if (!ens) {
+            return res.status(404).send({ message: 'Enseignant not found' });
+        }
+
+        const specialiteIds = ens.enseigne.flatMap(ens => ens.specialite);
+
+        const specialities = await specialiteModel.find({ 
+            _id: { $in: specialiteIds },
+            groupeId: groupeId
+        }).exec();
+
+        console.log(specialities);
+        return res.send(specialities);
+    } catch (error) {
+        console.error('Error fetching specialities:', error);
+        return res.status(500).send({ message: 'Internal Server Error' });
+    }
+};
+const getPosts = async (req, res) => {
+    try {
+        console.log(req.params);
+        const { id } = req.params;
 
 
+        const posts = await postModel.find({ 
+            user: id
+        }).exec();
+
+        return res.send(posts);
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return res.status(500).send({ message: 'Internal Server Error' });
+    }
+};
+const addRessource = async (req, res) => {
+    try {
+        const ressource = await ressourcesModel.create(req.body);
+        res.send(ressource);
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+};
+const getRessources = async (req, res) => {
+    try {
+        console.log(req.params);
+        const { id,idMAt } = req.params;
+
+
+        const ressources = await ressourcesModel.find({ 
+            userId: id,
+            matiereId: idMAt
+        }).exec();
+
+        return res.send(ressources);
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return res.status(500).send({ message: 'Internal Server Error' });
+    }
+};
 module.exports.enseignantController = {
     createTest,
     getTestById,
     getTests,
     UpdateNote,
-    findAllGroupe
+    findAllGroupe,
+    getSpecialite,
+    getPosts,
+    addRessource,
+    getRessources
 };
