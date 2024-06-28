@@ -4,16 +4,17 @@ const bcrypt = require("bcryptjs");
 const specialiteModel = require("../models/specialite.model");
 const testModel = require("../models/test.model");
 const enseignantModel = require("../models/enseignant.model");
+const eleveModel = require("../models/eleve.model");
 
 
 const createEnseignant = async (req, res) => {
     try {
-        const values = await enseignantValidation.schemaValidation.validateAsync(
-            req.body
-            );
+        // const values = await enseignantValidation.schemaValidation.validateAsync(
+        //     req.body
+        // );
         const exist = await helpers.checkUser(req.body.email);
-        if (exist){
-            return res.status(409).send({message : "user exist"});
+        if (exist) {
+            return res.status(409).send({ message: "user exist" });
         }
         const hash = await bcrypt.hash(req.body.password, 10);
         req.body.password = hash;
@@ -26,38 +27,71 @@ const createEnseignant = async (req, res) => {
 };
 
 const FindAllEnseignant = async (req, res) => {
-    console.log(req.user);
     try {
-      const users = await enseignantModel.find().select("-password");
+      const idToFind = req.params.id;
+      const users = await enseignantModel.find({ 'enseigne.GroupeEns': idToFind })
+                                         .select('-password')
+                                         .populate('enseigne.specialite', '_id nom');
+                                         ;
       return res.send(users);
     } catch (error) {
       console.log(error);
       return helpers.customError(res, error);
-    }
+    }   
   };
   
+  
+const findAllStudents = async (req, res) => {
+    try {
+        const idToFind = req.params.id;
+        const users = await eleveModel.find({ idGroupe: idToFind }).select("-password");
+        return res.send(users);
+    } catch (error) {
+        console.log(error);
+        return helpers.customError(res, error);
+    }
+};
+
 
 const updateEnseignant = async (req, res) => {
-    try{
-        const admins = await enseignantModel.findByIdAndUpdate({_id: req.params.id});
+    try {
+        await enseignantModel.findByIdAndUpdate({ _id: req.params.id }, req.body);
         return res.send("update successfully")
-    } catch (error){
+    } catch (error) {
         console.log(error);
         return helpers.customError(res, error);
     }
 
 };
+const modifierMatiere = async (req, res) => {
+    try {
+        console.log(req.body)
+        await specialiteModel.findByIdAndUpdate({ _id: req.params.id }, req.body);
+        return res.send("update successfully")
+    } catch (error) {
+        console.log(error);
+        return helpers.customError(res, error);
+    }
 
+};
 const deleteEnseignant = async (req, res) => {
-    try{
-        const enseignant = await enseignantModel.deleteOne({_id: req.params.id});
-    return res.send("deleted successfully");
-    } catch (error){
+    try {
+        const enseignant = await enseignantModel.deleteOne({ _id: req.params.id });
+        return res.send("deleted successfully");
+    } catch (error) {
         console.log(error);
         return helpers.customError(res, error);
     }
 };
-
+const deleteMatiere = async (req, res) => {
+    try {
+        const specialite = await specialiteModel.deleteOne({ _id: req.params.id });
+        return res.send("deleted successfully");
+    } catch (error) {
+        console.log(error);
+        return helpers.customError(res, error);
+    }
+};
 const createSpecialite = async (req, res) => {
     try {
         const specialite = await specialiteModel.create(req.body);
@@ -70,7 +104,7 @@ const createSpecialite = async (req, res) => {
 
 const getSpecialites = async (req, res) => {
     try {
-        const groupeId = req.params.groupeId; 
+        const groupeId = req.params.groupeId;
 
         const specialites = await specialiteModel.find({ groupeId: groupeId });
 
@@ -82,7 +116,7 @@ const getSpecialites = async (req, res) => {
 };
 
 
-const getTests = async (req,res) => {
+const getTests = async (req, res) => {
     try {
         const tests = await testModel.find();
         res.send(tests);
@@ -124,7 +158,15 @@ const createTest = async (req, res) => {
     }
 };
 
-
+const getAllSpecialities = async (req, res) => {
+    try {
+        const specialites = await specialiteModel.find();
+        res.send(specialites);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 module.exports.adminController = {
     createEnseignant,
@@ -134,5 +176,9 @@ module.exports.adminController = {
     FindAllEnseignant,
     getSpecialites,
     createTest,
-    getTests
+    getTests,
+    findAllStudents,
+    deleteMatiere,
+    modifierMatiere,
+    getAllSpecialities
 };

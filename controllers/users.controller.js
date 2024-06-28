@@ -8,9 +8,9 @@ const bcrypt = require("bcryptjs");
 
 const Register = async (req, res) => {
   try {
-    const values = await registerValidation.schemaValidation.validateAsync(
-      req.body
-    );
+    // const values = await registerValidation.schemaValidation.validateAsync(
+    //   req.body
+    // );
     const exist = await helpers.checkUser(req.body.email);
     if (exist) {
       return res.status(409).send({ message: "user exist" });
@@ -63,10 +63,26 @@ const FindById = async (req, res) => {
     return helpers.customError(res, error);
   }
 };
+const FindUserInformationById = async (req, res) => {
+  try {
+    //console.log(`Searching for user with ID: ${req.params.id}`);
+    const user = await userModel.findById(req.params.id).select("-password");
+    if (!user) {
+      console.log("User not found");
+      return res.status(404).send({ message: "User not found" });
+    }
+    console.log("User found:", user);
+    return res.send(user);
+  } catch (error) {
+    console.log("Error finding user:", error);
+    return helpers.customError(res, error);
+  }
+};
 
 module.exports.userController = {
   Register,
   FindAll,
   Delete,
   FindById,
+  FindUserInformationById
 };

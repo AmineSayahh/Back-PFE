@@ -11,6 +11,9 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   enseignantController.findAllGroupe
 );
-
+router.get("/getSpecialite/:id/:groupeId", enseignantController.getSpecialite);
+router.get("/getPosts/:id", enseignantController.getPosts);
+router.post("/addRessources", enseignantController.addRessource);
+router.get("/getRessources/:id/:idMAt", enseignantController.getRessources);
 
 module.exports.enseignantRouter = router;
